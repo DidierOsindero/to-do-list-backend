@@ -2,18 +2,18 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import {
-  addDummyDbItems,
   addDbItem,
   getAllDbItems,
   getDbItemById,
-  DbItem,
   updateDbItemById,
+  IToDoData
 } from "./db";
-import filePath from "./filePath";
 
-// loading in some dummy items into the database
-// (comment out if desired, or change the number)
-addDummyDbItems(20);
+export interface noIdToDoData {
+  text: string;
+  complete: boolean;
+}
+import filePath from "./filePath";
 
 const app = express();
 
@@ -35,18 +35,16 @@ app.get("/", (req, res) => {
 });
 
 // GET /items
-app.get("/items", (req, res) => {
-  const allSignatures = getAllDbItems();
-  res.status(200).json(allSignatures);
+app.get("/to-dos", (req, res) => {
+  const allToDos = getAllDbItems();
+  res.status(200).json(allToDos);
 });
 
 // POST /items
-app.post<{}, {}, DbItem>("/items", (req, res) => {
-  // to be rigorous, ought to handle non-conforming request bodies
-  // ... but omitting this as a simplification
+app.post<{}, {}, noIdToDoData>("/to-dos", (req, res) => {
   const postData = req.body;
-  const createdSignature = addDbItem(postData);
-  res.status(201).json(createdSignature);
+  const createdToDo = addDbItem(postData);
+  res.status(201).json(createdToDo);
 });
 
 // GET /items/:id
@@ -70,7 +68,7 @@ app.delete<{ id: string }>("/items/:id", (req, res) => {
 });
 
 // PATCH /items/:id
-app.patch<{ id: string }, {}, Partial<DbItem>>("/items/:id", (req, res) => {
+app.patch<{ id: string }, {}, Partial<IToDoData>>("/items/:id", (req, res) => {
   const matchingSignature = updateDbItemById(parseInt(req.params.id), req.body);
   if (matchingSignature === "not found") {
     res.status(404).json(matchingSignature);

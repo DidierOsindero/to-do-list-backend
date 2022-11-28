@@ -1,32 +1,15 @@
-export interface DbItem {
-  // sketch out interface here
-}
-
-export interface DbItemWithId extends DbItem {
+import { noIdToDoData
+ } from "./server";
+export interface IToDoData {
   id: number;
+  text: string;
+  complete: boolean;
 }
 
-const db: DbItemWithId[] = [];
+const db: IToDoData[] = [];
 
 /** Variable to keep incrementing id of database items */
 let idCounter = 0;
-
-/**
- * Adds in some dummy database items to the database
- *
- * @param n - the number of items to generate
- * @returns the created items
- */
-export const addDummyDbItems = (n: number): DbItemWithId[] => {
-  const createdSignatures: DbItemWithId[] = [];
-  for (let count = 0; count < n; count++) {
-    const createdSignature = addDbItem({
-      // possibly add some generated data here
-    });
-    createdSignatures.push(createdSignature);
-  }
-  return createdSignatures;
-};
 
 /**
  * Adds in a single item to the database
@@ -34,10 +17,11 @@ export const addDummyDbItems = (n: number): DbItemWithId[] => {
  * @param data - the item data to insert in
  * @returns the item added (with a newly created id)
  */
-export const addDbItem = (data: DbItem): DbItemWithId => {
-  const newEntry: DbItemWithId = {
+export const addDbItem = (data: noIdToDoData): IToDoData => {
+  const newEntry: IToDoData = {
     id: ++idCounter,
-    ...data,
+    text: data.text,
+    complete: false
   };
   db.push(newEntry);
   return newEntry;
@@ -50,7 +34,7 @@ export const addDbItem = (data: DbItem): DbItemWithId => {
  * @returns the deleted database item (if originally located),
  *  otherwise the string `"not found"`
  */
-export const deleteDbItemById = (id: number): DbItemWithId | "not found" => {
+export const deleteDbItemById = (id: number): IToDoData | "not found" => {
   const idxToDeleteAt = findIndexOfDbItemById(id);
   if (typeof idxToDeleteAt === "number") {
     const itemToDelete = getDbItemById(id);
@@ -82,7 +66,7 @@ const findIndexOfDbItemById = (id: number): number | "not found" => {
  * Find all database items
  * @returns all database items from the database
  */
-export const getAllDbItems = (): DbItemWithId[] => {
+export const getAllDbItems = (): IToDoData[] => {
   return db;
 };
 
@@ -93,7 +77,7 @@ export const getAllDbItems = (): DbItemWithId[] => {
  * @returns the located database item (if found),
  *  otherwise the string `"not found"`
  */
-export const getDbItemById = (id: number): DbItemWithId | "not found" => {
+export const getDbItemById = (id: number): IToDoData | "not found" => {
   const maybeEntry = db.find((entry) => entry.id === id);
   if (maybeEntry) {
     return maybeEntry;
@@ -113,8 +97,8 @@ export const getDbItemById = (id: number): DbItemWithId | "not found" => {
  */
 export const updateDbItemById = (
   id: number,
-  newData: Partial<DbItem>
-): DbItemWithId | "not found" => {
+  newData: Partial<IToDoData>
+): IToDoData | "not found" => {
   const idxOfEntry = findIndexOfDbItemById(id);
   // type guard against "not found"
   if (typeof idxOfEntry === "number") {
