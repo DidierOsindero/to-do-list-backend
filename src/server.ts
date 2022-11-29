@@ -6,7 +6,8 @@ import {
   getAllDbItems,
   getDbItemById,
   updateDbItemById,
-  IToDoData
+  IToDoData,
+  deleteDbItemById
 } from "./db";
 
 export interface ItoDoText {
@@ -59,9 +60,11 @@ app.get<{ id: string }>("/to-dos/:id", (req, res) => {
 // DELETE /to-dos/:id
 app.delete<{ id: string }>("/to-dos/:id", (req, res) => {
   const matchingToDo = getDbItemById(parseInt(req.params.id));
+
   if (matchingToDo === "not found") {
     res.status(404).json(matchingToDo);
   } else {
+    deleteDbItemById(parseInt(req.params.id));
     res.status(200).json(matchingToDo);
   }
 });
