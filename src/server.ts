@@ -33,46 +33,46 @@ app.get("/", (req, res) => {
   res.sendFile(pathToFile);
 });
 
-// GET /items
+// GET /to-dos
 app.get("/to-dos", (req, res) => {
   const allToDos = getAllDbItems();
   res.status(200).json(allToDos);
 });
 
-// POST /items
+// POST /to-dos
 app.post<{}, {}, ItoDoText>("/to-dos", (req, res) => {
   const postData = req.body;
   const createdToDo = addDbItem(postData);
   res.status(201).json(createdToDo);
 });
 
-// GET /items/:id
-app.get<{ id: string }>("/items/:id", (req, res) => {
-  const matchingSignature = getDbItemById(parseInt(req.params.id));
-  if (matchingSignature === "not found") {
-    res.status(404).json(matchingSignature);
+// GET /to-dos/:id
+app.get<{ id: string }>("/to-dos/:id", (req, res) => {
+  const matchingToDo = getDbItemById(parseInt(req.params.id));
+  if (matchingToDo === "not found") {
+    res.status(404).json(matchingToDo);
   } else {
-    res.status(200).json(matchingSignature);
+    res.status(200).json(matchingToDo);
   }
 });
 
-// DELETE /items/:id
-app.delete<{ id: string }>("/items/:id", (req, res) => {
-  const matchingSignature = getDbItemById(parseInt(req.params.id));
-  if (matchingSignature === "not found") {
-    res.status(404).json(matchingSignature);
+// DELETE /to-dos/:id
+app.delete<{ id: string }>("/to-dos/:id", (req, res) => {
+  const matchingToDo = getDbItemById(parseInt(req.params.id));
+  if (matchingToDo === "not found") {
+    res.status(404).json(matchingToDo);
   } else {
-    res.status(200).json(matchingSignature);
+    res.status(200).json(matchingToDo);
   }
 });
 
-// PATCH /items/:id
-app.patch<{ id: string }, {}, Partial<IToDoData>>("/items/:id", (req, res) => {
-  const matchingSignature = updateDbItemById(parseInt(req.params.id), req.body);
-  if (matchingSignature === "not found") {
-    res.status(404).json(matchingSignature);
+// PATCH /to-dos/:id
+app.patch<{ id: string }, {}, Partial<IToDoData>>("/to-dos/:id", (req, res) => {
+  const matchingToDo = updateDbItemById(parseInt(req.params.id), req.body);
+  if (matchingToDo === "not found") {
+    res.status(404).json(matchingToDo);
   } else {
-    res.status(200).json(matchingSignature);
+    res.status(200).json(matchingToDo);
   }
 });
 
