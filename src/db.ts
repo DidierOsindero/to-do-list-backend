@@ -22,7 +22,7 @@ export const addDbItem = (data: ItoDoText): IToDoData => {
     text: data.text,
     complete: false,
   };
-  db.push(newEntry);
+  db.unshift(newEntry);
   return newEntry;
 };
 
@@ -68,7 +68,7 @@ export const deleteCompletedDbItems = ():
   }
 
   return "no complete to dos";
-};
+}; 
 
 /**
  * Finds the index of a database item with a given id
