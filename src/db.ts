@@ -20,7 +20,7 @@ export const addDbItem = (data: ItoDoText): IToDoData => {
   const newEntry: IToDoData = {
     id: ++idCounter,
     text: data.text,
-    complete: false
+    complete: false,
   };
   db.push(newEntry);
   return newEntry;
@@ -46,12 +46,14 @@ export const deleteDbItemById = (id: number): IToDoData | "not found" => {
 
 /**
  * Deletes all completed to-dos in the database
- * 
+ *
  * @returns an array containing the deleted database items (if originally located),
  *  otherwise the string `"no complete to dos"`
  */
 
-export const deleteCompletedDbItems = (): IToDoData[] | "no complete to dos" => {
+export const deleteCompletedDbItems = ():
+  | IToDoData[]
+  | "no complete to dos" => {
   const deletedToDoArr: IToDoData[] = [];
   for (let i = 0; i < db.length; i++) {
     if (db[i].complete === true) {
@@ -65,8 +67,8 @@ export const deleteCompletedDbItems = (): IToDoData[] | "no complete to dos" => 
     return deletedToDoArr;
   }
 
-  return "no complete to dos"
-}
+  return "no complete to dos";
+};
 
 /**
  * Finds the index of a database item with a given id

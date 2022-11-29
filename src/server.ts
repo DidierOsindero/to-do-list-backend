@@ -8,7 +8,7 @@ import {
   updateDbItemById,
   IToDoData,
   deleteDbItemById,
-  deleteCompletedDbItems
+  deleteCompletedDbItems,
 } from "./db";
 
 export interface ItoDoText {
@@ -74,7 +74,7 @@ app.delete<{ id: string }>("/to-dos/:id", (req, res) => {
 app.delete("/completed-to-dos", (req, res) => {
   const returnedArr = deleteCompletedDbItems();
   if (returnedArr === "no complete to dos") {
-    res.status(400).json(returnedArr)
+    res.status(400).json(returnedArr);
   } else {
     res.status(200).json(returnedArr);
   }
