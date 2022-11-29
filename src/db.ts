@@ -45,6 +45,30 @@ export const deleteDbItemById = (id: number): IToDoData | "not found" => {
 };
 
 /**
+ * Deletes all completed to-dos in the database
+ * 
+ * @returns an array containing the deleted database items (if originally located),
+ *  otherwise the string `"no complete to dos"`
+ */
+
+export const deleteCompletedDbItems = (): IToDoData[] | "no complete to dos" => {
+  const deletedToDoArr: IToDoData[] = [];
+  for (let i = 0; i < db.length; i++) {
+    if (db[i].complete === true) {
+      const deletedToDo = db.splice(Number(i), 1);
+      deletedToDoArr.push(deletedToDo[0]);
+      i--;
+    }
+  }
+
+  if (deletedToDoArr.length > 0) {
+    return deletedToDoArr;
+  }
+
+  return "no complete to dos"
+}
+
+/**
  * Finds the index of a database item with a given id
  *
  * @param id - the id of the database item to locate the index of
