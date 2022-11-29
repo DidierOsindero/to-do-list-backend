@@ -1,5 +1,4 @@
-import { noIdToDoData
- } from "./server";
+import { ItoDoText } from "./server";
 export interface IToDoData {
   id: number;
   text: string;
@@ -17,7 +16,7 @@ let idCounter = 0;
  * @param data - the item data to insert in
  * @returns the item added (with a newly created id)
  */
-export const addDbItem = (data: noIdToDoData): IToDoData => {
+export const addDbItem = (data: ItoDoText): IToDoData => {
   const newEntry: IToDoData = {
     id: ++idCounter,
     text: data.text,

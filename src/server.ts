@@ -9,9 +9,8 @@ import {
   IToDoData
 } from "./db";
 
-export interface noIdToDoData {
+export interface ItoDoText {
   text: string;
-  complete: boolean;
 }
 import filePath from "./filePath";
 
@@ -41,7 +40,7 @@ app.get("/to-dos", (req, res) => {
 });
 
 // POST /items
-app.post<{}, {}, noIdToDoData>("/to-dos", (req, res) => {
+app.post<{}, {}, ItoDoText>("/to-dos", (req, res) => {
   const postData = req.body;
   const createdToDo = addDbItem(postData);
   res.status(201).json(createdToDo);
