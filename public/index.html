@@ -11,28 +11,32 @@
     <main>
       <section>
         <h3>Retrieve all items</h3>
-        <p><code>GET /items</code></p>
+        <p><code>GET /to-dos</code></p>
       </section>
       <section>
         <h3>Create an item</h3>
-        <p><code>POST /items</code></p>
+        <p><code>POST /to-dos</code></p>
       </section>
       <section>
         <h3>Retrieve a specific item</h3>
-        <p><code>GET /items/{id}</code></p>
+        <p><code>GET /to-dos/{id}</code></p>
       </section>
       <section>
         <h3>Update a specific item</h3>
-        <p><code>PATCH /items/{id}</code></p>
+        <p><code>PATCH /to-dos/{id}</code></p>
         <p>Attaching a JSON body with the possible below fields:</p>
         <ul>
-          <li><code>title</code> (string)</li>
-          <li><code>message</code> (string)</li>
+          <li><code>text</code> (string)</li>
+          <li><code>complete</code> (boolean)</li>
         </ul>
       </section>
       <section>
         <h3>Delete a specific item</h3>
-        <p><code>DELETE /items/{id}</code></p>
+        <p><code>DELETE /to-dos/{id}</code></p>
+      </section>
+      <section>
+        <h3>Delete all completed to dos</h3>
+        <p><code>DELETE /completed-to-dos</code></p>
       </section>
     </main>
   </body>
