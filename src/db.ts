@@ -68,7 +68,7 @@ export const deleteCompletedDbItems = ():
   }
 
   return "no complete to dos";
-}; 
+};
 
 /**
  * Finds the index of a database item with a given id
