@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { Client } from "pg";
 import {
   addDbItem,
   getAllDbItems,
@@ -11,19 +10,22 @@ import {
   deleteDbItemById,
   deleteCompletedDbItems,
 } from "./db";
+import filePath from "./filePath";
+import { Client } from "pg";
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+dotenv.config();
+const PORT_NUMBER = process.env.PORT ?? 4000;
+
+const client = new Client(process.env.DATABASE_URL);
+client.connect();
 
 export interface ItoDoText {
   text: string;
 }
-import filePath from "./filePath";
-
-const app = express();
-
-/** Parses JSON data in a request automatically */
-app.use(express.json());
-app.use(cors());
-dotenv.config();
-const PORT_NUMBER = process.env.PORT ?? 4000;
 
 // API info page
 app.get("/", (req, res) => {
@@ -32,8 +34,10 @@ app.get("/", (req, res) => {
 });
 
 // GET /to-dos
-app.get("/to-dos", (req, res) => {
-  const allToDos = getAllDbItems();
+app.get("/to-dos", async (req, res) => {
+  const text = "SELECT * FROM todos";
+  const queryResponse = await client.query(text);
+  const allToDos = queryResponse.rows;
   res.status(200).json(allToDos);
 });
 
