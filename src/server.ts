@@ -42,9 +42,12 @@ app.get("/to-dos", async (req, res) => {
 });
 
 // POST /to-dos
-app.post<{}, {}, ItoDoText>("/to-dos", (req, res) => {
+app.post<{}, {}, ItoDoText>("/to-dos", async (req, res) => {
   const postData = req.body;
-  const createdToDo = addDbItem(postData);
+  const text = "INSERT INTO todos (task) VALUES ($1) RETURNING *";
+  const values = [postData.text];
+  const queryResponse = await client.query(text, values);
+  const createdToDo = queryResponse.rows[0];
   res.status(201).json(createdToDo);
 });
 
@@ -55,11 +58,7 @@ app.get<{ id: string }>("/to-dos/:id", async (req, res) => {
   const values = [id];
   const queryResponse = await client.query(text, values);
   const matchingToDo = queryResponse.rows[0];
-  if (matchingToDo === "not found") {
-    res.status(404).json(matchingToDo);
-  } else {
-    res.status(200).json(matchingToDo);
-  }
+  res.status(200).json(matchingToDo);
 });
 
 // DELETE /to-dos/:id
