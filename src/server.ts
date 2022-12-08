@@ -49,8 +49,12 @@ app.post<{}, {}, ItoDoText>("/to-dos", (req, res) => {
 });
 
 // GET /to-dos/:id
-app.get<{ id: string }>("/to-dos/:id", (req, res) => {
-  const matchingToDo = getDbItemById(parseInt(req.params.id));
+app.get<{ id: string }>("/to-dos/:id", async (req, res) => {
+  const id = req.params.id;
+  const text = "SELECT * FROM todos WHERE id = $1";
+  const values = [id];
+  const queryResponse = await client.query(text, values);
+  const matchingToDo = queryResponse.rows[0];
   if (matchingToDo === "not found") {
     res.status(404).json(matchingToDo);
   } else {
