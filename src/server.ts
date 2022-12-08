@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import {
@@ -84,14 +84,40 @@ app.delete("/completed-to-dos", (req, res) => {
 });
 
 // PATCH /to-dos/:id
-app.patch<{ id: string }, {}, Partial<IToDoData>>("/to-dos/:id", (req, res) => {
-  const matchingToDo = updateDbItemById(parseInt(req.params.id), req.body);
-  if (matchingToDo === "not found") {
-    res.status(404).json(matchingToDo);
-  } else {
-    res.status(200).json(matchingToDo);
+app.patch<{ id: string }, {}, Partial<IToDoData>>(
+  "/to-dos/:id",
+  async (req, res) => {
+    const postData = req.body;
+
+    try {
+      if (postData.text && postData.complete !== undefined) {
+        const text =
+          "UPDATE todos SET task = $1, complete = $2 WHERE id = $3 RETURNING *";
+        const values = [postData.text, postData.complete, req.params.id];
+        const queryResponse = await client.query(text, values);
+        const updatedToDo = queryResponse.rows[0];
+        res.status(200).json(updatedToDo);
+      } else if (
+        postData.text === undefined &&
+        postData.complete !== undefined
+      ) {
+        const text = "UPDATE todos SET complete = $1 WHERE id = $2 RETURNING *";
+        const values = [postData.complete, req.params.id];
+        const queryResponse = await client.query(text, values);
+        const updatedToDo = queryResponse.rows[0];
+        res.status(200).json(updatedToDo);
+      } else if (postData.text && postData.complete === undefined) {
+        const text = "UPDATE todos SET task = $1 WHERE id = $2 RETURNING *";
+        const values = [postData.text, req.params.id];
+        const queryResponse = await client.query(text, values);
+        const updatedToDo = queryResponse.rows[0];
+        res.status(200).json(updatedToDo);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
-});
+);
 
 app.listen(PORT_NUMBER, () => {
   console.log(`Server is listening on port ${PORT_NUMBER}!`);
