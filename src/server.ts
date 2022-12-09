@@ -1,15 +1,7 @@
 import express, { response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import {
-  addDbItem,
-  getAllDbItems,
-  getDbItemById,
-  updateDbItemById,
-  IToDoData,
-  deleteDbItemById,
-  deleteCompletedDbItems,
-} from "./db";
+import { getDbItemById, deleteDbItemById, deleteCompletedDbItems } from "./db";
 import filePath from "./filePath";
 import { Client } from "pg";
 
@@ -24,7 +16,13 @@ const client = new Client(process.env.DATABASE_URL);
 client.connect();
 
 export interface ItoDoText {
-  text: string;
+  task: string;
+}
+
+export interface IToDoData {
+  id: number;
+  task: string;
+  complete: boolean;
 }
 
 // API info page
@@ -45,7 +43,7 @@ app.get("/to-dos", async (req, res) => {
 app.post<{}, {}, ItoDoText>("/to-dos", async (req, res) => {
   const postData = req.body;
   const text = "INSERT INTO todos (task) VALUES ($1) RETURNING *";
-  const values = [postData.text];
+  const values = [postData.task];
   const queryResponse = await client.query(text, values);
   const createdToDo = queryResponse.rows[0];
   res.status(201).json(createdToDo);
@@ -61,26 +59,12 @@ app.get<{ id: string }>("/to-dos/:id", async (req, res) => {
   res.status(200).json(matchingToDo);
 });
 
-// DELETE /to-dos/:id
-app.delete<{ id: string }>("/to-dos/:id", (req, res) => {
-  const matchingToDo = getDbItemById(parseInt(req.params.id));
-
-  if (matchingToDo === "not found") {
-    res.status(404).json(matchingToDo);
-  } else {
-    deleteDbItemById(parseInt(req.params.id));
-    res.status(200).json(matchingToDo);
-  }
-});
-
 // DELETE /completed-to-dos
-app.delete("/completed-to-dos", (req, res) => {
-  const returnedArr = deleteCompletedDbItems();
-  if (returnedArr === "no complete to dos") {
-    res.status(400).json(returnedArr);
-  } else {
-    res.status(200).json(returnedArr);
-  }
+app.delete("/completed-to-dos", async (req, res) => {
+  const text = "DELETE FROM todos WHERE complete = true RETURNING *";
+  const queryResponse = await client.query(text);
+  const returnedArr = queryResponse.rows;
+  res.status(200).json(returnedArr);
 });
 
 // PATCH /to-dos/:id
@@ -90,15 +74,15 @@ app.patch<{ id: string }, {}, Partial<IToDoData>>(
     const postData = req.body;
 
     try {
-      if (postData.text && postData.complete !== undefined) {
+      if (postData.task && postData.complete !== undefined) {
         const text =
           "UPDATE todos SET task = $1, complete = $2 WHERE id = $3 RETURNING *";
-        const values = [postData.text, postData.complete, req.params.id];
+        const values = [postData.task, postData.complete, req.params.id];
         const queryResponse = await client.query(text, values);
         const updatedToDo = queryResponse.rows[0];
         res.status(200).json(updatedToDo);
       } else if (
-        postData.text === undefined &&
+        postData.task === undefined &&
         postData.complete !== undefined
       ) {
         const text = "UPDATE todos SET complete = $1 WHERE id = $2 RETURNING *";
@@ -106,9 +90,9 @@ app.patch<{ id: string }, {}, Partial<IToDoData>>(
         const queryResponse = await client.query(text, values);
         const updatedToDo = queryResponse.rows[0];
         res.status(200).json(updatedToDo);
-      } else if (postData.text && postData.complete === undefined) {
+      } else if (postData.task && postData.complete === undefined) {
         const text = "UPDATE todos SET task = $1 WHERE id = $2 RETURNING *";
-        const values = [postData.text, req.params.id];
+        const values = [postData.task, req.params.id];
         const queryResponse = await client.query(text, values);
         const updatedToDo = queryResponse.rows[0];
         res.status(200).json(updatedToDo);

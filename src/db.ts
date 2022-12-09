@@ -1,7 +1,7 @@
 import { ItoDoText } from "./server";
 export interface IToDoData {
   id: number;
-  text: string;
+  task: string;
   complete: boolean;
 }
 
@@ -19,7 +19,7 @@ let idCounter = 0;
 export const addDbItem = (data: ItoDoText): IToDoData => {
   const newEntry: IToDoData = {
     id: ++idCounter,
-    text: data.text,
+    task: data.task,
     complete: false,
   };
   db.unshift(newEntry);
