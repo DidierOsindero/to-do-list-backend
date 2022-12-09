@@ -1,7 +1,6 @@
 import express, { response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { getDbItemById, deleteDbItemById, deleteCompletedDbItems } from "./db";
 import filePath from "./filePath";
 import { Client } from "pg";
 
