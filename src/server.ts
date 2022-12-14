@@ -11,6 +11,10 @@ app.use(cors());
 dotenv.config();
 const PORT_NUMBER = process.env.PORT ?? 4000;
 
+if (!process.env.DATABASE_URL) {
+  throw "No DATABASE_URL environment variable";
+}
+
 const client = new Client(process.env.DATABASE_URL);
 client.connect();
 
