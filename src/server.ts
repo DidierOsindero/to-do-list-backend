@@ -24,7 +24,7 @@ export interface IToDoData {
   complete: boolean;
 }
 
-// API info page
+// API info
 app.get("/", (req, res) => {
   const pathToFile = filePath("../public/index.html");
   res.sendFile(pathToFile);
